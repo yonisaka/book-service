@@ -8,16 +8,14 @@ import (
 
 // Repositories is a struct
 type Repositories struct {
-	Book    repository.BookRepositoryInterface
-	HttpLog repository.HttpLogRepositoryInterface
-	DB      *gorm.DB
+	Book repository.BookRepositoryInterface
+	DB   *gorm.DB
 }
 
 // NewDBService is constructor
 func NewDBService(db *gorm.DB) *Repositories {
 	return &Repositories{
-		Book:    persistence.NewBookRepository(db),
-		HttpLog: persistence.NewHttpLogRepository(db),
-		DB:      db,
+		Book: persistence.NewBookRepository(db),
+		DB:   db,
 	}
 }

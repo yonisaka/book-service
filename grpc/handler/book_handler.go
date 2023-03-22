@@ -20,6 +20,7 @@ func (c *Handler) GetBook(ctx context.Context, r *pb.BookByIDRequest) (*pb.BookR
 		Id:          uint64(book.ID),
 		Title:       book.Title,
 		Description: book.Description,
+		Author:      book.Author,
 		CreatedAt:   book.CreatedAt.String(),
 		UpdatedAt:   book.UpdatedAt.String(),
 	}, nil
@@ -38,6 +39,7 @@ func (c *Handler) GetBookList(ctx context.Context, r *pb.BookListQuery) (*pb.Boo
 			Id:          uint64(b.ID),
 			Title:       b.Title,
 			Description: b.Description,
+			Author:      b.Author,
 			CreatedAt:   b.CreatedAt.String(),
 			UpdatedAt:   b.UpdatedAt.String(),
 		})
@@ -64,6 +66,7 @@ func (c *Handler) CreateBook(ctx context.Context, r *pb.BookCreateRequest) (*pb.
 		Id:          uint64(book.ID),
 		Title:       book.Title,
 		Description: book.Description,
+		Author:      book.Author,
 		CreatedAt:   book.CreatedAt.String(),
 		UpdatedAt:   book.UpdatedAt.String(),
 	}, nil
@@ -90,6 +93,7 @@ func (c *Handler) UpdateBook(ctx context.Context, r *pb.BookUpdateRequest) (*pb.
 		Id:          uint64(bookData.ID),
 		Title:       bookData.Title,
 		Description: bookData.Description,
+		Author:      bookData.Author,
 		CreatedAt:   bookData.CreatedAt.String(),
 		UpdatedAt:   bookData.UpdatedAt.String(),
 	}, nil

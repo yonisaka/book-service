@@ -1,9 +1,26 @@
 package dto
 
+import "sync"
+
+var oneRsp sync.Once
+var rsp *Response
+
 type Response struct {
 	Code    int         `json:"code"`
 	Message interface{} `json:"message,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
+}
+
+// NewResponse initialize response
+func NewResponse() *Response {
+	oneRsp.Do(func() {
+		rsp = &Response{}
+	})
+
+	// clone response
+	x := *rsp
+
+	return &x
 }
 
 // WithCode setter response var name

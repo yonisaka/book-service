@@ -35,13 +35,21 @@ func (r *Router) Init() *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 
 	e := gin.Default()
-	e.Use(middleware.Logger())
 
 	hand := handler.NewHandler(r.repo, r.client)
 
 	book := handler.NewBookHandler(hand)
 
-	e.GET("/api/books", book.GetBookList)
+	e.Use(middleware.Logger())
+	e.Use(middleware.SaveHttpLog(r.client))
+
+	api := e.Group("/api")
+	api.Use(middleware.AuthB2B(r.client))
+	api.GET("/books", book.GetBookList)
+	api.GET("/books/:id", book.GetBook)
+	api.POST("/books", book.CreateBook)
+	api.PUT("/books/:id", book.UpdateBook)
+	api.DELETE("/books/:id", book.DeleteBook)
 
 	return e
 }

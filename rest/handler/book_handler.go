@@ -1,19 +1,16 @@
 package handler
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/yonisaka/book-service/consts"
+	"github.com/yonisaka/book-service/domain/entity"
 	"github.com/yonisaka/book-service/rest/dto"
-	pbAuth "github.com/yonisaka/protobank/auth"
 	"net/http"
+	"strconv"
 )
 
 type BookHandler struct {
 	*Handler
-}
-
-type BookRequest struct {
 }
 
 func NewBookHandler(h *Handler) *BookHandler {
@@ -21,32 +18,108 @@ func NewBookHandler(h *Handler) *BookHandler {
 }
 
 func (r *BookHandler) GetBookList(c *gin.Context) {
-	authb2b := pbAuth.AuthB2BPayload{
-		Token: c.Request.Header.Get("Authorization"),
-	}
-	_, err := r.client.AuthB2B(c, &authb2b)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, dto.Response{
-			Code:    http.StatusUnauthorized,
-			Message: fmt.Sprintf("%v", consts.MessageUnauthorized),
-		})
-		return
-	}
-
 	rsp, err := r.repo.Book.Get(c)
-	//rsp, err := r.client.GetBookList(c, nil)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, dto.Response{
-			Code:    http.StatusInternalServerError,
-			Message: fmt.Sprintf("%v", err),
-		})
+		c.AbortWithStatusJSON(
+			http.StatusInternalServerError,
+			*dto.NewResponse().WithCode(http.StatusInternalServerError).WithMessage(err.Error()),
+		)
 		return
 	}
 
-	c.JSON(http.StatusOK, dto.Response{
-		Code:    http.StatusOK,
-		Message: consts.MessageSuccess,
-		Data:    rsp,
-	})
+	c.JSON(
+		http.StatusOK,
+		*dto.NewResponse().WithCode(http.StatusOK).WithData(rsp),
+	)
+	return
+}
+
+func (r *BookHandler) GetBook(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	rsp, err := r.repo.Book.Find(c, id)
+	if err != nil {
+		c.AbortWithStatusJSON(
+			http.StatusInternalServerError,
+			*dto.NewResponse().WithCode(http.StatusInternalServerError).WithMessage(err.Error()),
+		)
+		return
+	}
+
+	c.JSON(
+		http.StatusOK,
+		*dto.NewResponse().WithCode(http.StatusOK).WithData(rsp),
+	)
+	return
+}
+
+func (r *BookHandler) CreateBook(c *gin.Context) {
+	var req entity.Book
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.AbortWithStatusJSON(
+			http.StatusBadRequest,
+			*dto.NewResponse().WithCode(http.StatusBadRequest).WithMessage(err.Error()),
+		)
+		return
+	}
+	req.Author = c.GetString("username")
+	err := r.repo.Book.Create(c, &req)
+	if err != nil {
+		c.AbortWithStatusJSON(
+			http.StatusInternalServerError,
+			*dto.NewResponse().WithCode(http.StatusInternalServerError).WithMessage(err.Error()),
+		)
+		return
+	}
+
+	c.JSON(
+		http.StatusOK,
+		*dto.NewResponse().WithCode(http.StatusOK).WithMessage(consts.MessageSuccessCreate).WithData(req),
+	)
+	return
+}
+
+func (r *BookHandler) UpdateBook(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var req entity.Book
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.AbortWithStatusJSON(
+			http.StatusBadRequest,
+			*dto.NewResponse().WithCode(http.StatusBadRequest).WithMessage(err.Error()),
+		)
+		return
+	}
+	req.Author = c.GetString("username")
+	err := r.repo.Book.Update(c, id, &req)
+	if err != nil {
+		c.AbortWithStatusJSON(
+			http.StatusInternalServerError,
+			*dto.NewResponse().WithCode(http.StatusInternalServerError).WithMessage(err.Error()),
+		)
+		return
+	}
+
+	req.ID = uint(id)
+	c.JSON(
+		http.StatusOK,
+		*dto.NewResponse().WithCode(http.StatusOK).WithMessage(consts.MessageSuccessUpdate).WithData(req),
+	)
+	return
+}
+
+func (r *BookHandler) DeleteBook(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	err := r.repo.Book.Delete(c, id)
+	if err != nil {
+		c.AbortWithStatusJSON(
+			http.StatusInternalServerError,
+			*dto.NewResponse().WithCode(http.StatusInternalServerError).WithMessage(err.Error()),
+		)
+		return
+	}
+
+	c.JSON(
+		http.StatusOK,
+		*dto.NewResponse().WithCode(http.StatusOK).WithMessage(consts.MessageSuccessDelete),
+	)
 	return
 }
