@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+
 	"github.com/yonisaka/book-service/domain/entity"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -54,6 +55,7 @@ func (c *Handler) CreateBook(ctx context.Context, r *pb.BookCreateRequest) (*pb.
 	book := entity.Book{
 		Title:       r.GetTitle(),
 		Description: r.GetDescription(),
+		Author:      r.GetAuthor(),
 	}
 
 	err := c.repo.Book.Create(ctx, &book)
@@ -82,6 +84,7 @@ func (c *Handler) UpdateBook(ctx context.Context, r *pb.BookUpdateRequest) (*pb.
 	bookData := &entity.Book{
 		Title:       r.GetTitle(),
 		Description: r.GetDescription(),
+		Author:      r.GetAuthor(),
 	}
 
 	err := c.repo.Book.Update(ctx, bookId, bookData)
@@ -90,7 +93,7 @@ func (c *Handler) UpdateBook(ctx context.Context, r *pb.BookUpdateRequest) (*pb.
 	}
 
 	return &pb.BookResponse{
-		Id:          uint64(bookData.ID),
+		Id:          uint64(bookId),
 		Title:       bookData.Title,
 		Description: bookData.Description,
 		Author:      bookData.Author,

@@ -18,13 +18,20 @@ type DBConfig struct {
 }
 
 type Config struct {
-	AppName     string
-	AppPort     int
-	AppEnv      string
-	AppLang     string
-	AppTimeZone string
-	GRPCPort    int
+	AppName         string
+	AppPort         int
+	AppEnv          string
+	AppLang         string
+	AppTimeZone     string
+	GRPCPort        int
+	GRPCService     GRPCServer
+	GRPCUserService GRPCServer
 	DBConfig
+}
+
+type GRPCServer struct {
+	Host string
+	Port string
 }
 
 func New() *Config {
@@ -35,6 +42,14 @@ func New() *Config {
 		AppLang:     getEnv("APP_LANG", "en"),
 		AppTimeZone: getEnv("APP_TIMEZONE", ""),
 		GRPCPort:    getEnvAsInt("GRPC_PORT", 9000),
+		GRPCService: GRPCServer{
+			Host: getEnv("GRPC_HOST", "localhost"),
+			Port: getEnv("GRPC_PORT", "9001"),
+		},
+		GRPCUserService: GRPCServer{
+			Host: getEnv("GRPC_USER_SERVICE_HOST", "localhost"),
+			Port: getEnv("GRPC_USER_SERVICE_PORT", "9002"),
+		},
 		DBConfig: DBConfig{
 			DBDriver:   getEnv("DB_DRIVER", "postgres"),
 			DBHost:     getEnv("DB_HOSt", "localhost"),

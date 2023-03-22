@@ -4,6 +4,7 @@ import (
 	"github.com/yonisaka/book-service/config"
 	"github.com/yonisaka/book-service/domain/service"
 	"github.com/yonisaka/book-service/grpc/handler"
+	"github.com/yonisaka/book-service/grpc/interceptor"
 	pbBook "github.com/yonisaka/protobank/book"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -27,12 +28,12 @@ func NewGRPCServer(conf *config.Config, repo *service.Repositories) *Server {
 func (s *Server) Run(port int) error {
 	server := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			// interceptor.UnaryLoggerServerInterceptor(),
-			// interceptor.UnaryAuthServerInterceptor(),
+			interceptor.UnaryLoggerServerInterceptor(),
+			interceptor.UnaryAuthServerInterceptor(),
 		),
 		grpc.ChainStreamInterceptor(
-			// interceptor.StreamLoggerServerInterceptor(),
-			// interceptor.StreamAuthServerInterceptor(),
+			interceptor.StreamLoggerServerInterceptor(),
+			interceptor.StreamAuthServerInterceptor(),
 		),
 	)
 

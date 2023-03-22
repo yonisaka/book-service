@@ -1,11 +1,12 @@
 package middleware
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/yonisaka/book-service/grpc/client"
 	"github.com/yonisaka/book-service/rest/dto"
 	pbAuth "github.com/yonisaka/protobank/auth"
-	"net/http"
 )
 
 func AuthB2B(client *client.GRPCClient) gin.HandlerFunc {

@@ -1,11 +1,12 @@
 package middleware
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/yonisaka/book-service/grpc/client"
 	"github.com/yonisaka/book-service/rest/dto"
 	pbLog "github.com/yonisaka/protobank/log"
-	"net/http"
 )
 
 func SaveHttpLog(client *client.GRPCClient) gin.HandlerFunc {
@@ -18,7 +19,7 @@ func SaveHttpLog(client *client.GRPCClient) gin.HandlerFunc {
 
 		_, err := client.SaveHttpLog(c, &payload)
 		if err != nil {
-			c.JSON(
+			c.AbortWithStatusJSON(
 				http.StatusUnprocessableEntity,
 				*dto.NewResponse().WithCode(http.StatusUnprocessableEntity).WithMessage(err.Error()),
 			)
