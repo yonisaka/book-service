@@ -23,6 +23,13 @@ Install
 ```shell
 cd book-service && go mod download 
 ```
+
+## Migrate Database
+Run Database Migrate
+```shell
+go run main.go db:migrate
+```
+
 ## Running Application
 Run gRPC server
 ```shell
