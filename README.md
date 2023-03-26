@@ -5,6 +5,13 @@
 <img src="https://github.com/yonisaka/protobank/blob/main/diagram.png?raw=true" width="500"/>
 </p>
 
+## Requirements
+| Requirement | Version |
+| ----------- | ----------- |
+| Go | >= 1.19 |
+| PostgreSQL | >= 15.1 |
+| Protoc Gen | >= 1.2 |
+
 ## Proto compiler
 
 As we're using Go, the compiler should be the same language
